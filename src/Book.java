@@ -1,26 +1,16 @@
-public class Book {
-    private int id;
-    private String title;
+public class Book extends LibraryItem {
+
     private String author;
     private int isbn;
-    private int year;
+
 
 
     public Book(int id, String title, String author, int isbn, int year ) {
 
-    this.id = id;
-    this.title = title;
+    super(id, title, year);
     this.author = author;
     this.isbn = isbn;
-    this.year = year; 
-    }
 
-    public int getId() {
-        return id;
-    }
-    
-    public String getTitle() {
-        return title;
     }
 
     public String getAuthor() {
@@ -31,15 +21,15 @@ public class Book {
         return isbn;
     }
 
-    public int getYear() {
-        return year;
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
-    public void setYear(int year) {
-        if(year > 0) {
-            this.year = year;
-        }
+    public void setIsbn(int isbn) {
+        this.isbn = isbn;
     }
+
 
 }
 
