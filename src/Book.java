@@ -4,6 +4,10 @@ public class Book extends LibraryItem implements Borrowable, Returnable, Reserva
     private int isbn;
     private boolean borrowed;
 
+    public boolean isBorrowed() {
+        return borrowed;
+    }
+
 
 
     public Book(int id, String title, String author, int isbn, int year ) {

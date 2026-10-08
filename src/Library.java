@@ -16,6 +16,7 @@ public class Library {
     }
    }
 
+   //find by id
    public Book findBookByID (int id) {
 
     for (Book book : books) {
@@ -25,6 +26,17 @@ public class Library {
     }
     return null;
 
+   }
+
+   //find by tittle
+   public Book findBookByTitle (String title) {
+
+    for (Book book : books) {
+        if (book.getTitle().equals(title)) {
+            return book;
+        }
+    }
+    return null;
    }
 
 
@@ -43,20 +55,68 @@ public class Library {
             return;
         }
     }
+    System.out.println("Book not found");
    }
 
+
+   //borrow 
    public void borrowBookById (int id) {
+
+    boolean found = false;
 
     for (Book book : books) {
         if (book.getId() == id) {
+
+            found = true;
+
             try {
                 book.borrow();
             } catch (BookNotAvailableException e) {
-                System.out.println("book not available ");
+                System.out.println("Book not available ");
+            }
+            return;
+        }
+        
+    }
+
+    if (!found) {
+        System.out.println("Book not found");
+    }
+    
+   }
+
+    //return method
+    public void returnById (int id) {
+
+        for (Book book : books) {
+            if (book.getId() == id) {
+                book.returnBook();
+                return;
+            }
+        }
+        System.out.println("Book not found");
+    }
+
+    //show available books
+    public  void showAvailableBooks() {
+
+        for (Book book : books) {
+            if (!book.isBorrowed()) {
+                book.displayInfo();
+            }
+        }
+    }
+
+    //show borrowed books 
+    public void showBorrowedBooks() {
+
+        for (Book book : books) {
+            if (book.isBorrowed()) {
+                book.displayInfo();
             }
         }
     }
 
 
-   }
 }
+
