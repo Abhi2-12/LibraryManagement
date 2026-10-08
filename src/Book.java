@@ -1,4 +1,4 @@
-public class Book extends LibraryItem implements Borrowable, Returnable, Reservable {
+public class Book extends LibraryItem implements Borrowable, Returnable {
 
     private String author;
     private int isbn;
@@ -67,12 +67,6 @@ public class Book extends LibraryItem implements Borrowable, Returnable, Reserva
         }
 
     }
-
-    @Override 
-    public void reserve() {
-
-    }
-
 
 }
 
