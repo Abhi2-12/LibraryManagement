@@ -25,4 +25,15 @@ public class Magazine extends LibraryItem {
         this.publisher = publisher;
     }
 
+    @Override 
+    public void displayInfo() {
+
+        System.out.println("ID : " + getId());
+        System.out.println("Title : " + getTitle());
+        System.out.println("Year : " + getYear());
+        System.out.println("Issue Number : " + getIssueNumber());
+        System.out.println("Publisher : " + getPublisher());
+
+    }
+
 }

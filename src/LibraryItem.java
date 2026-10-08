@@ -1,8 +1,20 @@
-public class LibraryItem {
+public abstract class LibraryItem {
 
     private int id;
     private String title;
     private int year;
+
+    public abstract void displayInfo();
+
+    public int search(int id) {
+        System.out.println("id");
+        return id;
+    }
+
+    public String search(String title) {
+        System.out.println("tittle");
+        return title;
+    }
 
     public LibraryItem(int id, String title, int year) {
         this.id = id;

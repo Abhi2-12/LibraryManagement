@@ -1,4 +1,4 @@
-public class EBook extends Book {
+public class EBook extends Book implements Downloadable{
     private double fileSize;
 
     public EBook(int id, String title, String author, int isbn, int year, double filesize) {
@@ -12,6 +12,11 @@ public class EBook extends Book {
     
     public void setFilesize(double filesize) {
         this.fileSize = filesize;
+    }
+
+    @Override 
+    public void download() {
+        System.out.println("EBook downloaded successfully");        
     }
 
 }
