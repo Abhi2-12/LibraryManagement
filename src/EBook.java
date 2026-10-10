@@ -1,7 +1,7 @@
 public class EBook extends Book implements Downloadable{
     private double fileSize;
 
-    public EBook(int id, String title, String author, int isbn, int year, double filesize) {
+    public EBook(int id, String title, String author, String isbn, int year, double filesize) {
         super(id, title, author, isbn, year);
         this.fileSize = filesize;
     }

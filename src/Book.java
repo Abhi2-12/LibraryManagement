@@ -1,7 +1,7 @@
 public class Book extends LibraryItem implements Borrowable, Returnable {
 
     private String author;
-    private int isbn;
+    private String isbn;
     private boolean borrowed;
 
     public boolean isBorrowed() {
@@ -10,7 +10,7 @@ public class Book extends LibraryItem implements Borrowable, Returnable {
 
 
 
-    public Book(int id, String title, String author, int isbn, int year ) {
+    public Book(int id, String title, String author, String isbn, int year ) {
 
     super(id, title, year);
     this.author = author;
@@ -22,7 +22,7 @@ public class Book extends LibraryItem implements Borrowable, Returnable {
         return author;
     }
 
-    public int getIsbn() {
+    public String getIsbn() {
         return isbn;
     }
 
@@ -31,7 +31,7 @@ public class Book extends LibraryItem implements Borrowable, Returnable {
         this.author = author;
     }
 
-    public void setIsbn(int isbn) {
+    public void setIsbn(String isbn) {
         this.isbn = isbn;
     }
   
