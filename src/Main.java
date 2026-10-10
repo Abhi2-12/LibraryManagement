@@ -6,13 +6,6 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
         Library library = new Library();
-        Book book1 = new Book(1, "Math", "Abhi", "3456789", 2002);
-        Book book2 = new Book(2, "Java", "Abhi", "123456", 2026);
-        Book book3 = new Book(3, "English", "Abir", "456789", 2016);
-
-        library.addBook(book1);
-        library.addBook(book2);
-        library.addBook(book3);
 
         while (true) {
 

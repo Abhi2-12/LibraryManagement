@@ -11,6 +11,8 @@ public class Library {
    }
 
    public void showBooks() {
+    ArrayList<Book> books = BookDAO.getAllBooks();
+    System.out.println("Books found: " + books.size());
     for (Book book : books) {
          book.displayInfo();
     }
@@ -19,12 +21,7 @@ public class Library {
    //find by id
    public Book findBookByID (int id) {
 
-    for (Book book : books) {
-        if (book.getId() == id) {
-            return book;
-        }
-    }
-    return null;
+    return BookDAO.getBookByID(id);
 
    }
 
