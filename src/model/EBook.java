@@ -1,3 +1,7 @@
+package model;
+
+import  interfaces.Downloadable;
+
 public class EBook extends Book implements Downloadable{
     private double fileSize;
 

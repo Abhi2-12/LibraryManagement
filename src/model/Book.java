@@ -1,3 +1,9 @@
+package model;
+
+import interfaces.Borrowable;
+import interfaces.Returnable;
+import exception.BookNotAvailableException;
+
 public class Book extends LibraryItem implements Borrowable, Returnable {
 
     private String author;

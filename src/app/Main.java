@@ -1,3 +1,8 @@
+package app;
+
+import model.Book;
+import service.Library;
+
 import java.util.Scanner;
 
 public class Main {
