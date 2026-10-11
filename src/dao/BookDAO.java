@@ -110,4 +110,37 @@ public class BookDAO {
         return null;
     }
 
+    //search by tittle
+    public static ArrayList<Book> searchByTitle(String title) {
+        ArrayList<Book> books = new ArrayList<>();
+
+        //create sql qurary
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+        "SELECT * FROM books where title LIKE ?") ){
+
+            statement.setString(1, "%" +  title + "%");
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+
+                int id = resultSet.getInt("id");
+                String bookTitle = resultSet.getString("title");
+                String author = resultSet.getString("author");
+                String isbn = resultSet.getString("isbn");
+                int year = resultSet.getInt("year");
+                
+                Book foundBook = new Book(id, bookTitle, author, isbn, year);
+                books.add(foundBook);
+
+                
+            }
+            
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return books;
+    }
+
 }

@@ -31,14 +31,8 @@ public class Library {
    }
 
    //find by tittle
-   public Book findBookByTitle (String title) {
-
-    for (Book book : books) {
-        if (book.getTitle().equals(title)) {
-            return book;
-        }
-    }
-    return null;
+   public ArrayList<Book> findBookByTitle(String title) {
+    return BookDAO.searchByTitle(title);
    }
 
 

@@ -3,6 +3,7 @@ package app;
 import model.Book;
 import service.Library;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -52,12 +53,16 @@ public class Main {
                     scanner.nextLine();
 
                     String title = scanner.nextLine();     
-                    Book foundBook1 = library.findBookByTitle(title);
+                    ArrayList<Book> foundBooks = library.findBookByTitle(title);
 
-                    if (foundBook1 != null) {
-                        foundBook1.displayInfo();
-                    }else {
-                        System.out.println("Book not found... ");
+                    if (foundBooks.isEmpty()) {
+                        System.out.println("No book found");
+                    } else {
+                        System.out.println("Book found : " + foundBooks.size());
+
+                        for (Book book : foundBooks) {
+                            book.displayInfo();
+                        }
                     }
                     break;
                 //Borrow
