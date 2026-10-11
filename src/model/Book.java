@@ -59,7 +59,7 @@ public class Book extends LibraryItem implements Borrowable, Returnable {
             throw new BookNotAvailableException("Book is already borrowed");
         }
         borrowed = true;
-        System.out.println("Book borrowed successfully");
+        
 
     }
 

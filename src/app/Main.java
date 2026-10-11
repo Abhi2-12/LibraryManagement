@@ -24,7 +24,8 @@ public class Main {
             System.out.println("6. Show available books");
             System.out.println("7. Show borrowed books");
             System.out.println("8. Remove book");
-            System.out.println("9. Exit");
+            System.out.println("9. Add book");
+            System.out.println("10. Exit");
 
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
@@ -95,7 +96,28 @@ public class Main {
                     library.removeBookById(id4);
                     break;
 
+                    
                 case 9:
+                    scanner.nextLine(); // Consume leftover newline
+
+                    System.out.print("Enter book title: ");
+                    String tittle = scanner.nextLine();
+
+                    System.out.print("Enter author name: ");
+                    String author = scanner.nextLine();
+
+                    System.out.print("Enter publication year: ");
+                    int year = scanner.nextInt();
+                    scanner.nextLine();
+
+                    System.out.print("Enter ISBN: ");
+                    String isbn = scanner.nextLine();
+
+                    Book book = new Book(0, tittle, author, isbn, year);
+                    library.addBook(book);
+                    break;
+
+                case 10:
                     System.out.println("Goodbye!");
                     scanner.close();
                     return;

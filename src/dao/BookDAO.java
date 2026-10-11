@@ -101,7 +101,19 @@ public class BookDAO {
             String isbn = resultSet.getString("isbn");
             int year = resultSet.getInt("year");
 
-            return new Book(bookId , title, author, isbn, year);
+            boolean borrowed = resultSet.getBoolean("borrowed");
+
+            Book book = new Book(bookId , title, author, isbn, year);
+
+            if (borrowed) {
+                try {
+                    book.borrow();
+                } catch (BookNotAvailableException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+
+            return book;
         }
             
         } catch (SQLException e) {
@@ -130,11 +142,23 @@ public class BookDAO {
                 String isbn = resultSet.getString("isbn");
                 int year = resultSet.getInt("year");
                 
+                
+                boolean borrowed = resultSet.getBoolean("borrowed");
+
                 Book foundBook = new Book(id, bookTitle, author, isbn, year);
+                
+                if (borrowed) {
+                    try {
+                        foundBook.borrow();
+                    } catch (BookNotAvailableException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+                
                 books.add(foundBook);
 
-                
             }
+            
             
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -142,5 +166,55 @@ public class BookDAO {
 
         return books;
     }
+
+    //borrowed by id
+    public static boolean borrowedBookById(int id) {
+        
+        try (Connection connection = DatabaseConnection.getConnection();
+    PreparedStatement statement = connection.prepareStatement(
+        "UPDATE books SET borrowed = 1 Where id = ?"
+    )){
+        statement.setInt(1, id);
+        int rowUpdated = statement.executeUpdate();
+        return rowUpdated > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    
+    public static boolean returnBookById(int id) {
+        try (Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(
+                "UPDATE books SET borrowed = 0 WHERE id = ? AND borrowed = 1")) {
+
+            statement.setInt(1, id);
+
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated > 0;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    
+        public static boolean removeBookById(int id) {
+            try (Connection connection = DatabaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                    "DELETE FROM books WHERE id = ?")) {
+
+                statement.setInt(1, id);
+
+                int rowsDeleted = statement.executeUpdate();
+                return rowsDeleted > 0;
+
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                return false;
+            }
+        }
 
 }

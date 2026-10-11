@@ -4,15 +4,19 @@ import model.Book;
 import dao.BookDAO;
 import exception.BookNotAvailableException;
 import java.util.ArrayList;
-import java.util.Iterator;
+
 
 public class Library {
 
    private ArrayList<Book> books = new ArrayList<>();
- 
+
+
+ // add book
    public void addBook(Book book) {
 
-    books.add(book);
+    //books.add(book);
+    BookDAO.addBook(book);
+
    }
 
    public void showBooks() {
@@ -37,64 +41,88 @@ public class Library {
 
 
    //remove book
+    
+    public void removeBookById(int id) {
+        Book book = BookDAO.getBookByID(id);
 
-   public void removeBookById(int id) {
-
-    Iterator<Book> iterator = books.iterator();
-
-    while (iterator.hasNext()) {
-
-        Book book = iterator.next();
-
-        if (book.getId() == id) {
-            iterator.remove();
+        if (book == null) {
+            System.out.println("Book not found");
             return;
         }
+
+        if (book.isBorrowed()) {
+            System.out.println("Cannot remove a borrowed book");
+            return;
+        }
+
+        boolean deleted = BookDAO.removeBookById(id);
+
+        if (deleted) {
+            System.out.println("Book removed successfully");
+        } else {
+            System.out.println("Could not remove book");
+        }
     }
-    System.out.println("Book not found");
-   }
 
 
    //borrow 
    public void borrowBookById (int id) {
 
-    boolean found = false;
+    Book book = BookDAO.getBookByID(id);
 
-    for (Book book : books) {
-        if (book.getId() == id) {
-
-            found = true;
-
-            try {
-                book.borrow();
-            } catch (BookNotAvailableException e) {
-                System.out.println("Book not available ");
-            }
-            return;
-        }
-        
-    }
-
-    if (!found) {
+    if(book == null) {
         System.out.println("Book not found");
+        return ;
     }
-    
-   }
+
+    if (book.isBorrowed()) {
+        System.out.println("Book is already Borrowed");
+        return;      
+    }
+
+    boolean update = BookDAO.borrowedBookById(id);
+
+    if (update) {
+        try {
+            book.borrow();
+            System.out.println("Book borrowed successfully");
+        } catch (BookNotAvailableException e) {
+            System.out.println(e.getMessage());
+        }
+    } else {
+        System.out.println("Could not borrow book");
+    }
+ }
+   
 
     //return method
     public void returnById (int id) {
 
-        for (Book book : books) {
-            if (book.getId() == id) {
-                book.returnBook();
-                return;
-            }
+        Book book = BookDAO.getBookByID(id);
+
+        if (book == null) {
+            System.out.println(" Book not found");
+            return;
         }
-        System.out.println("Book not found");
+
+        if (!book.isBorrowed()) {
+            System.out.println("Book is not currently borrowed");
+        }
+
+        boolean update = BookDAO.returnBookById(id);
+
+        if (update) {
+            book.returnBook();
+            System.out.println("Book return successfully");
+        }else {
+            System.out.println("Couldnot return Book");
+        }
     }
 
     //show available books
     public  void showAvailableBooks() {
+
+        ArrayList<Book> books = BookDAO.getAllBooks();
 
         for (Book book : books) {
             if (!book.isBorrowed()) {
@@ -106,12 +134,19 @@ public class Library {
     //show borrowed books 
     public void showBorrowedBooks() {
 
+        ArrayList<Book> books = BookDAO.getAllBooks();
+
         for (Book book : books) {
             if (book.isBorrowed()) {
                 book.displayInfo();
             }
         }
     }
+
+
+
+
+    
 
 
 }
