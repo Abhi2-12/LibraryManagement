@@ -2,6 +2,7 @@ package app;
 
 import model.Book;
 import model.Member;
+import model.Role;
 import service.Library;
 import service.MemberService;
 
@@ -17,6 +18,7 @@ public class Main {
 
         //test for registration
         MemberService memberService = new MemberService();
+        Member loggedInMember = null;
 
 
         while (true) {
@@ -35,6 +37,7 @@ public class Main {
             //
             System.out.println("11. Register member");
             System.out.println("12. Login");
+            System.out.println("13. Logout");
 
             System.out.println("10. Exit");
 
@@ -80,14 +83,24 @@ public class Main {
                     break;
                 //Borrow
 
-                case 4:
+                case 4:      
+                    if (loggedInMember == null) {
+                        System.out.println("Please log in first ....");
+                        break;
+                    }
+                    
                     System.out.println("Enter book id to borrow");
                     int id1 = scanner.nextInt();
+
                     library.borrowBookById(id1);
                     break;
 
                     //Return book
                 case 5:
+                    if (loggedInMember == null) {
+                        System.out.println("Please log in first...");
+                        break;
+                    }
                     System.out.println("Enter Book id to return");
                     int id3 = scanner.nextInt();
                     library.returnById(id3);
@@ -103,6 +116,11 @@ public class Main {
                     break;
 
                 case 8:
+                    if (loggedInMember == null || loggedInMember.getRole() !=Role.ADMIN) {
+                        System.out.println("Access denied...Admin login required.");
+                        break;
+                    }
+
                     System.out.println("Enter book id to remove book");
                     int id4 = scanner.nextInt();
                     library.removeBookById(id4);
@@ -110,6 +128,10 @@ public class Main {
 
                     
                 case 9:
+                    if (loggedInMember == null || loggedInMember.getRole() !=Role.ADMIN) {
+                        System.out.println("Access denied...Admin login required.");
+                        break;
+                    }
                     scanner.nextLine(); // Consume leftover newline
 
                     System.out.print("Enter book title: ");
@@ -163,7 +185,7 @@ public class Main {
                         System.out.print("Enter password: ");
                         String loginPassword = scanner.nextLine();
 
-                        Member loggedInMember = memberService.login(loginEmail, loginPassword);
+                        loggedInMember = memberService.login(loginEmail, loginPassword);
 
                         if (loggedInMember != null) {
                             System.out.println("Login successful!");
@@ -171,6 +193,17 @@ public class Main {
                             System.out.println("Role: " + loggedInMember.getRole());
                         } else {
                             System.out.println("Invalid email or password.");
+                        }
+                        break;
+                    
+                        //logout
+                    case 13:
+                        if (loggedInMember == null) {
+                            System.out.println("Nobody is logged in.");
+                        } else {
+                            System.out.println("Goodbye, " + loggedInMember.getName() + "!");
+                            loggedInMember = null;
+                            System.out.println("You have logged out successfully.");
                         }
                         break;
 
