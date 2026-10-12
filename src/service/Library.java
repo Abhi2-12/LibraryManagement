@@ -66,37 +66,37 @@ public class Library {
 
 
    //borrow 
-   public void borrowBookById (int id) {
+   public void borrowBookById (int id, int memberID) {
 
-    Book book = BookDAO.getBookByID(id);
+        Book book = BookDAO.getBookByID(id);
 
-    if(book == null) {
-        System.out.println("Book not found");
-        return ;
-    }
-
-    if (book.isBorrowed()) {
-        System.out.println("Book is already Borrowed");
-        return;      
-    }
-
-    boolean update = BookDAO.borrowedBookById(id);
-
-    if (update) {
-        try {
-            book.borrow();
-            System.out.println("Book borrowed successfully");
-        } catch (BookNotAvailableException e) {
-            System.out.println(e.getMessage());
+        if(book == null) {
+            System.out.println("Book not found");
+            return ;
         }
-    } else {
-        System.out.println("Could not borrow book");
+
+        if (book.isBorrowed()) {
+            System.out.println("Book is already Borrowed");
+            return;      
+        }
+
+        boolean update = BookDAO.borrowedBookById(id, memberID);
+
+        if (update) {
+            try {
+                book.borrow();
+                System.out.println("Book borrowed successfully");
+            } catch (BookNotAvailableException e) {
+                System.out.println(e.getMessage());
+            }
+        } else {
+            System.out.println("Could not borrow book");
+        }
     }
- }
    
 
     //return method
-    public void returnById (int id) {
+    public void returnById (int id, int memberID) {
 
         Book book = BookDAO.getBookByID(id);
 
@@ -107,9 +107,10 @@ public class Library {
 
         if (!book.isBorrowed()) {
             System.out.println("Book is not currently borrowed");
+            return;
         }
 
-        boolean update = BookDAO.returnBookById(id);
+        boolean update = BookDAO.returnBookById(id, memberID);
 
         if (update) {
             book.returnBook();

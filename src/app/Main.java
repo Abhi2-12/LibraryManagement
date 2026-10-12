@@ -92,7 +92,7 @@ public class Main {
                     System.out.println("Enter book id to borrow");
                     int id1 = scanner.nextInt();
 
-                    library.borrowBookById(id1);
+                    library.borrowBookById(id1, loggedInMember.getId());
                     break;
 
                     //Return book
@@ -103,7 +103,7 @@ public class Main {
                     }
                     System.out.println("Enter Book id to return");
                     int id3 = scanner.nextInt();
-                    library.returnById(id3);
+                    library.returnById(id3,loggedInMember.getId());
                     break;
 
                     //show available book

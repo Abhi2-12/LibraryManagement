@@ -67,7 +67,7 @@ public class Book extends LibraryItem implements Borrowable, Returnable {
     public void returnBook() {
         if (borrowed) {
             borrowed = false;
-            System.out.println("Book returned successfully");
+            //System.out.println("Book returned successfully");
         }else {
             System.out.println("Book is not borrowed");
         }

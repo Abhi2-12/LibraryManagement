@@ -169,28 +169,38 @@ public class BookDAO {
     }
 
     //borrowed by id
-    public static boolean borrowedBookById(int id) {
+    public static boolean borrowedBookById(int id, int memberID) {
+
+        String sql = "UPDATE books SET borrowed = 1, borrowed_by = ? "
+        + "WHERE id = ? AND borrowed = 0";
         
         try (Connection connection = DatabaseConnection.getConnection();
-    PreparedStatement statement = connection.prepareStatement(
-        "UPDATE books SET borrowed = 1 Where id = ?"
-    )){
-        statement.setInt(1, id);
+    PreparedStatement statement = connection.prepareStatement(sql)){
+
+        statement.setInt(1, memberID);
+        statement.setInt(2, id);
+
         int rowUpdated = statement.executeUpdate();
         return rowUpdated > 0;
+
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return false;
         }
     }
 
-    
-    public static boolean returnBookById(int id) {
+    //retun
+    public static boolean returnBookById(int id, int memberID) {
+
+        String sql = "UPDATE books SET borrowed = 0, borrowed_by = NULL " 
+        + "WHERE id = ? AND borrowed = 1 AND borrowed_by = ?";
+
         try (Connection connection = DatabaseConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement(
-                "UPDATE books SET borrowed = 0 WHERE id = ? AND borrowed = 1")) {
+                sql)) {
 
             statement.setInt(1, id);
+            statement.setInt(2, memberID);
 
             int rowsUpdated = statement.executeUpdate();
             return rowsUpdated > 0;
