@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 
 public class BookDAO {
 
+    //add book
     public static void addBook(Book book) {
 
         try (Connection connection = DatabaseConnection.getConnection();

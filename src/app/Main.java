@@ -1,7 +1,9 @@
 package app;
 
 import model.Book;
+import model.Member;
 import service.Library;
+import service.MemberService;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -12,6 +14,10 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
         Library library = new Library();
+
+        //test for registration
+        MemberService memberService = new MemberService();
+
 
         while (true) {
 
@@ -25,10 +31,16 @@ public class Main {
             System.out.println("7. Show borrowed books");
             System.out.println("8. Remove book");
             System.out.println("9. Add book");
+
+            //
+            System.out.println("11. Register member");
+            System.out.println("12. Login");
+
             System.out.println("10. Exit");
 
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
+            scanner.nextLine();
 
             switch (choice) {
 
@@ -121,6 +133,46 @@ public class Main {
                     System.out.println("Goodbye!");
                     scanner.close();
                     return;
+
+                case 11:
+                        scanner.nextLine(); // Consume leftover newline
+
+                        System.out.print("Enter name: ");
+                        String name = scanner.nextLine();
+
+                        System.out.print("Enter email: ");
+                        String email = scanner.nextLine();
+
+                        System.out.print("Enter password: ");
+                        String password = scanner.nextLine();
+
+                        boolean registered = memberService.register(name, email, password);
+
+                        if (registered) {
+                            System.out.println("Member registered successfully!");
+                        } else {
+                            System.out.println("Registration failed.");
+                        }
+                        break;
+
+                
+                    case 12:
+                        System.out.print("Enter email: ");
+                        String loginEmail = scanner.nextLine().trim();
+
+                        System.out.print("Enter password: ");
+                        String loginPassword = scanner.nextLine();
+
+                        Member loggedInMember = memberService.login(loginEmail, loginPassword);
+
+                        if (loggedInMember != null) {
+                            System.out.println("Login successful!");
+                            System.out.println("Welcome, " + loggedInMember.getName());
+                            System.out.println("Role: " + loggedInMember.getRole());
+                        } else {
+                            System.out.println("Invalid email or password.");
+                        }
+                        break;
 
                 default:
                     System.out.println("Invalid choice");
