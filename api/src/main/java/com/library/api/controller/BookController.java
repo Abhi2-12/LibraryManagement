@@ -10,6 +10,9 @@ import com.library.api.model.Book;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @RestController 
@@ -33,5 +36,12 @@ public class BookController {
     public Book getBookById(@PathVariable int id) {
         return bookRepository.findById(id).orElse(null);
     }
+
+    //add a new book
+    @PostMapping
+    public Book addBook(@RequestBody Book book) {
+        return bookRepository.save(book);
+    }
+    
     
 }
