@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.library.api.repository.BookRepository;
 import com.library.api.model.Book;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
@@ -20,11 +21,17 @@ public class BookController {
     public BookController(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
-
+    
+    //Get all book
     @GetMapping
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
-    
 
+    //get one book by id
+    @GetMapping("/{id}")
+    public Book getBookById(@PathVariable int id) {
+        return bookRepository.findById(id).orElse(null);
+    }
+    
 }
