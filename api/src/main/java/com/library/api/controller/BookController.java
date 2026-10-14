@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -76,5 +78,24 @@ public class BookController {
         bookRepository.deleteById(id);
     }
     
+    //search by author or title
+    @GetMapping("/search")
+    public List<Book> searchBooks(
+        @RequestParam (required = false) String title,
+        @RequestParam (required = false) String author) {
+
+            if (title != null) {
+                return bookRepository.findByTitleContainingIgnoreCase(title);
+            }
+
+            if (author != null) {
+                return bookRepository.findByAuthorContainingIgnoreCase(author);
+            }
+
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+                "Provide a title or author to search");
+        }
+    
+
     
 }
