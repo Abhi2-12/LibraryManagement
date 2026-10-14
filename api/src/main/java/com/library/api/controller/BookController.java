@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.library.api.repository.BookRepository;
+
+import jakarta.validation.Valid;
+
 import com.library.api.model.Book;
 
 import org.springframework.http.HttpStatus;
@@ -44,13 +47,13 @@ public class BookController {
 
     //add a new book
     @PostMapping
-    public Book addBook(@RequestBody Book book) {
+    public Book addBook(@Valid @RequestBody Book book) {
         return bookRepository.save(book);
     }
 
     //upadate book by id
     @PutMapping("/{id}")
-    public Book updateBook(@PathVariable int id, @RequestBody Book updatedBook) {
+    public Book updateBook(@PathVariable int id,@Valid  @RequestBody Book updatedBook) {
         Book existingBook = bookRepository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found"));
 
