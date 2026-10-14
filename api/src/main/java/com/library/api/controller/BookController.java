@@ -10,6 +10,7 @@ import com.library.api.repository.BookRepository;
 import com.library.api.model.Book;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,7 +38,8 @@ public class BookController {
     //get one book by id
     @GetMapping("/{id}")
     public Book getBookById(@PathVariable int id) {
-        return bookRepository.findById(id).orElse(null);
+        return bookRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found"));
     }
 
     //add a new book
@@ -60,6 +62,15 @@ public class BookController {
 
         return bookRepository.save(existingBook);
 
+    }
+
+    //delete a book by id
+    @DeleteMapping("/{id}")
+    public void deleteBOok(@PathVariable int id) {
+        if (!bookRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found");
+        }
+        bookRepository.deleteById(id);
     }
     
     
