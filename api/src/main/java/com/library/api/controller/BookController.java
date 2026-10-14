@@ -98,4 +98,47 @@ public class BookController {
     
 
     
+    // Borrow a book
+    @PostMapping("/{id}/borrow")
+    public Book borrowBook(@PathVariable int id) {
+
+        Book book = bookRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Book not found"
+            ));
+
+        if (book.isBorrowed()) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "Book is already borrowed"
+            );
+        }
+
+        book.setBorrowed(true);
+
+        return bookRepository.save(book);
+    }
+    
+    
+    // Return a book
+    @PostMapping("/{id}/return")
+    public Book returnBook(@PathVariable int id) {
+
+        Book book = bookRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Book not found"
+            ));
+
+        if (!book.isBorrowed()) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "Book is not currently borrowed"
+            );
+        }
+
+        book.setBorrowed(false);
+
+        return bookRepository.save(book);
+    }
+
+
+    
 }

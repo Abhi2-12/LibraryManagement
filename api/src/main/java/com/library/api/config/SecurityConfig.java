@@ -22,24 +22,45 @@ public class SecurityConfig {
             throws Exception {
 
         http
-            // Disable CSRF for this learning API
             .csrf(csrf -> csrf.disable())
 
-            // Allow GET requests without login
-            // Require authentication for other requests
             .authorizeHttpRequests(auth -> auth
+
+                // Anyone can view books
                 .requestMatchers(
                     HttpMethod.GET,
                     "/api/books",
                     "/api/books/**"
                 ).permitAll()
+
+                // Users can borrow and return books
+                .requestMatchers(
+                    HttpMethod.POST,
+                    "/api/books/*/borrow",
+                    "/api/books/*/return"
+                ).hasAnyRole("USER", "ADMIN")
+
+                // Only admins can manage book inventory
+                .requestMatchers(
+                    HttpMethod.POST,
+                    "/api/books"
+                ).hasRole("ADMIN")
+
+                .requestMatchers(
+                    HttpMethod.PUT,
+                    "/api/books/**"
+                ).hasRole("ADMIN")
+
+                .requestMatchers(
+                    HttpMethod.DELETE,
+                    "/api/books/**"
+                ).hasRole("ADMIN")
+
+                // All other requests require authentication
                 .anyRequest().authenticated()
             )
 
-            // Support Basic Authentication
             .httpBasic(Customizer.withDefaults())
-
-            // Keep browser form login enabled
             .formLogin(Customizer.withDefaults());
 
         return http.build();
@@ -54,12 +75,21 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService(
             PasswordEncoder passwordEncoder) {
 
-        UserDetails testUser = User.builder()
+        UserDetails regularUser = User.builder()
             .username("libraryuser")
             .password(passwordEncoder.encode("TestPass123!"))
             .roles("USER")
             .build();
 
-        return new InMemoryUserDetailsManager(testUser);
+        UserDetails adminUser = User.builder()
+            .username("libraryadmin")
+            .password(passwordEncoder.encode("AdminPass123!"))
+            .roles("ADMIN")
+            .build();
+
+        return new InMemoryUserDetailsManager(
+            regularUser,
+            adminUser
+        );
     }
 }
