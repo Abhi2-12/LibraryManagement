@@ -1,4 +1,103 @@
-# 📚 Library Management System
+# 📚 Library Management System – Backend (Phase 5)
+
+**Spring Boot REST API** that provides user registration, authentication, and library‑book management. This backend replaces the original console application and serves as the server for the upcoming frontend (Phase 6).
+
+## ✨ Key Features
+
+- **User Registration & Login** – Secure sign‑up and JWT‑based authentication using Spring Security.
+- **Role‑Based Access Control** – `ADMIN` can manage books; `MEMBER` can browse and borrow.
+- **Book CRUD** – Create, read, update, delete books via REST endpoints.
+- **Borrow / Return** – Track which member has borrowed a book.
+- **Persisted Data** – MySQL database accessed through Spring Data JPA.
+- **Password Hashing** – BCrypt hashing for stored passwords.
+
+## 🛠️ Technologies
+
+| Technology | Purpose |
+|------------|---------|
+| Java 22 | Core language |
+| Spring Boot | Application framework |
+| Spring Data JPA | Database access |
+| Spring Security | Authentication & authorization |
+| MySQL 8 | Persistent storage |
+| Maven/Gradle | Build tool |
+| Git & GitHub | Version control |
+
+## 📂 Project Structure (backend)
+
+```text
+src/main/java/com/library/api/
+├── config/                # SecurityConfig, SwaggerConfig
+├── controller/            # AuthController, BookController
+├── dto/                   # RegisterRequest, LoginRequest, BookDto
+├── model/                 # LibraryUser, Book, Role
+├── repository/            # LibraryUserRepository, BookRepository
+├── service/               # UserService, BookService
+└── LibraryManagementApplication.java
+
+src/main/resources/
+├── application.yml        # DB connection, JWT secret
+└── data.sql               # Optional seed data
+```
+
+## ⚙️ Requirements
+
+- JDK 22
+- MySQL 8 (or compatible)
+- Maven (`mvn`) **or** Gradle (`./gradlew`)
+- Git
+
+## 🚀 Getting Started
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/Abhi2-12/LibraryManagement.git
+cd LibraryManagement
+
+# 2. Switch to the backend branch
+git checkout phase-5-backend
+
+# 3. Configure the database
+# Edit src/main/resources/application.yml and set:
+#   spring.datasource.url=jdbc:mysql://localhost:3306/library_db
+#   spring.datasource.username=YOUR_USER
+#   spring.datasource.password=YOUR_PASSWORD
+#   spring.jpa.hibernate.ddl-auto=update
+
+# 4. Build the project (using Maven; Gradle works similarly)
+mvn clean package   # produces target/library-management-*.jar
+
+# 5. Run the application
+java -jar target/*.jar
+```
+
+The API will be available at `http://localhost:8080`. Swagger UI can be accessed at `http://localhost:8080/swagger-ui.html` (if enabled).
+
+## 📦 Deployment
+
+```bash
+# Build Docker image (optional)
+docker build -t library-backend:latest .
+# Run container
+docker run -d -p 8080:8080 \
+  -e SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/library_db \
+  -e SPRING_DATASOURCE_USERNAME=YOUR_USER \
+  -e SPRING_DATASOURCE_PASSWORD=YOUR_PASS \
+  library-backend:latest
+```
+
+## 🗺️ Roadmap (project‑wide)
+
+- Phase 4 – Spring Boot REST API (completed)
+- **Phase 5 – Backend (this branch)** – Full authentication & book management API
+- Phase 6 – Frontend (React + Vite) integrating with this backend
+
+## 👨‍💻 Author
+
+**Md. Anamul Hassan Abhi**
+- GitHub: [@Abhi2-12](https://github.com/Abhi2-12)
+- Project Repository: [LibraryManagement](https://github.com/Abhi2-12/LibraryManagement)
+
 
 A **Java-based console application** for managing library books, built to practice object-oriented programming, database integration, authentication, and clean code organization.
 
