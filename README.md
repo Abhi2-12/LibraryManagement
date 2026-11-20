@@ -183,3 +183,30 @@ The console application provides the foundation for a future REST API and fronte
 
 * GitHub: [@Abhi2-12](https://github.com/Abhi2-12)
 * Project Repository: [LibraryManagement](https://github.com/Abhi2-12/LibraryManagement)
+## 🚀 Deployment
+
+### Backend (phase-5-backend)
+
+```bash
+git clone https://github.com/Abhi2-12/LibraryManagement.git
+cd LibraryManagement
+git checkout phase-5-backend
+
+# Build (Gradle wrapper assumed)
+./gradlew bootJar   # produces build/libs/*.jar
+
+# Run
+java -jar build/libs/*.jar
+```
+
+The API will be available at `http://localhost:8080`.
+
+### Frontend (phase-6-frontend)
+
+```bash
+git checkout phase-6-frontend
+npm install
+npm run dev   # http://localhost:5173
+# For production build
+npm run build   # output in ./dist
+```
