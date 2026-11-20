@@ -167,7 +167,7 @@ java -cp "out;lib\mysql-connector-j-26.7.0.jar" app.Main
 * [x] **Phase 2:** MySQL integration and database-backed book management
 * [x] **Phase 3:** Member registration, login, password hashing, role-based access, and borrower tracking
 * [ ] **Phase 4:** Spring Boot REST API
-* [ ] **Phase 5:** Frontend development and API integration
+* [x] **Phase 5:** Frontend development and API integration
 
 ## 🎯 Project Goal
 
