@@ -158,3 +158,156 @@ body {
     border-radius: 6px;
     font-size: 15px;
 }
+
+
+/* Dashboard action buttons */
+.dashboard-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.dashboard-actions button,
+.table-actions button,
+.book-form button {
+    padding: 9px 14px;
+    border: none;
+    border-radius: 5px;
+    background-color: #2563eb;
+    color: white;
+    cursor: pointer;
+}
+
+.table-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.table-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.table-actions .danger-button {
+    background-color: #dc2626;
+}
+
+/* Book form */
+.book-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+.book-form input:not([type="checkbox"]) {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    font-size: 15px;
+}
+
+.book-form label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.book-form button[type="button"] {
+    background-color: #64748b;
+}
+
+/* Tables */
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table-actions {
+    min-width: 190px;
+}
+
+.recent-books {
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .dashboard-actions {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .dashboard-content {
+        overflow-x: hidden;
+    }
+}
+
+
+
+/* Full-screen dashboard layout */
+html,
+body,
+#root {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+}
+
+body {
+    min-width: 320px;
+}
+
+.dashboard-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    flex-shrink: 0;
+}
+
+.dashboard-content {
+    flex: 1;
+    min-width: 0;
+    width: calc(100% - 250px);
+    padding: 35px;
+}
+
+/* Make statistics use available space */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+}
+
+/* Allow tables to use the full content width */
+.recent-books,
+.table-wrapper {
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 180px;
+    }
+
+    .dashboard-content {
+        width: calc(100% - 180px);
+        padding: 20px;
+    }
+
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+}
