@@ -1,6 +1,6 @@
 # 🌐 Library Management – Phase 5 Backend (Spring Boot)
 
-**Spring Boot REST API** that implements the library‑management core features and serves the upcoming React frontend (Phase 6). The API provides user authentication (in‑memory for now), role‑based access control, and full CRUD operations on books stored in a MySQL database.
+**Spring Boot REST API** that implements the library‑management core features and serves the upcoming React frontend (Phase 6). It now uses a **persistent `library_users` table** for registration and login, while books are stored in the `books` table.
 
 ---
 
@@ -8,10 +8,11 @@
 
 | Feature | Description |
 |---------|-------------|
-| **Authentication** | Basic HTTP authentication (username / password) backed by Spring Security. Two in‑memory users are defined in `SecurityConfig.java`:<br>• `libraryuser / TestPass123!` → role **USER**<br>• `libraryadmin / AdminPass123!` → role **ADMIN** |
-| **Role‑Based Access** | <br>• `ADMIN` can **create**, **update**, **delete** books.<br>• `USER` can **view** books and **borrow/return** them. |
-| **Book Management** | CRUD endpoints (`/api/books`) backed by a JPA `Book` entity (`id`, `title`, `author`, `year`, `isbn`, `borrowed`). |
-| **Borrow / Return** | Endpoints `/api/books/{id}/borrow` and `/api/books/{id}/return` toggle the `borrowed` flag. |
+| **User registration & login** | New `LibraryUser` entity persisted in MySQL. Users can sign‑up via the `/api/auth/register` endpoint (not shown in the current controller but ready to be added) and log in via HTTP Basic (or JWT in future). |
+| **Authentication** | Spring Security authenticates against the `library_users` table (via a custom `UserDetailsService`). |
+| **Role‑Based Access** | `ADMIN` can **create**, **update**, **delete** books; `USER` can **view**, **borrow**, and **return** books. |
+| **Book Management** | CRUD endpoints (`/api/books`) backed by the JPA `Book` entity. |
+| **Borrow / Return** | `/api/books/{id}/borrow` and `/api/books/{id}/return` toggle the `borrowed` flag and record the borrowing user via `borrowed_by`. |
 | **CORS Configuration** | Allows the React dev server (`http://localhost:5173`) to call the API. |
 | **Global Exception Handling** | Centralised error responses via `GlobalExceptionHandler`. |
 | **Swagger UI** (optional) | API docs available at `/swagger-ui.html` when the dependency is added. |
@@ -27,7 +28,7 @@
 | **Spring Data JPA** | ORM layer for MySQL |
 | **Spring Security** | Authentication & authorization |
 | **MySQL 8** | Persistent storage |
-| **Maven / Gradle** | Build tool (choose one) |
+| **Maven / Gradle** | Build tool |
 | **JWT** (optional) | Token‑based auth – can be added later |
 | **Swagger/OpenAPI** (optional) | API documentation |
 
@@ -38,49 +39,52 @@
 ```
 api/
 └─ src/main/java/com/library/api/
-   ├─ config/                # SecurityConfig (CORS, password encoder, in‑memory users)
+   ├─ config/                # SecurityConfig (CORS, password encoder, custom UserDetailsService)
    ├─ controller/            # AuthController ( /api/auth/me ), BookController ( CRUD )
-   ├─ dto/                   # DTOs for requests/responses (RegisterRequest, etc.)
+   ├─ dto/                   # DTOs for registration, login responses, BookDto, etc.
    ├─ exception/             # GlobalExceptionHandler
-   ├─ model/                 # Book entity (fields + JPA annotations)
-   ├─ repository/            # BookRepository (extends JpaRepository)
-   └─ service/               # Business logic (UserDetailsService, BookService, etc.)
+   ├─ model/                 # Book, LibraryUser (JPA entities)
+   ├─ repository/            # BookRepository, LibraryUserRepository (extends JpaRepository)
+   └─ service/               # UserDetailsService implementation, BookService, etc.
    └─ LibraryApiApplication.java   # Spring Boot entry point
 src/main/resources/
-   └─ application.yml        # DB connection, JWT secret, etc.
+   └─ application.properties  # DB connection, JPA settings, security logs
 ```
 
 ---
 
-## 🗄️ Database Schema
+## 🗄️ Database Schema (current)
 
 ```sql
-CREATE DATABASE library_db;
+CREATE DATABASE IF NOT EXISTS library_db;
 USE library_db;
 
--- Books table (managed by JPA)
-CREATE TABLE books (
+-- Books table (managed by JPA Book entity)
+CREATE TABLE IF NOT EXISTS books (
     id           INT AUTO_INCREMENT PRIMARY KEY,
     title        VARCHAR(150) NOT NULL,
     author       VARCHAR(100) NOT NULL,
-    year         INT          NOT NULL DEFAULT 2000,
-    isbn         VARCHAR(20)  NOT NULL,
-    borrowed     TINYINT(1)   NOT NULL DEFAULT 0,
-    borrowed_by  INT NULL,
+    year         INT NOT NULL,
+    isbn         VARCHAR(20) NOT NULL,
+    borrowed     TINYINT(1) NOT NULL DEFAULT 0,
+    borrowed_by  BIGINT NULL,
     CONSTRAINT fk_books_borrowed_by
-        FOREIGN KEY (borrowed_by) REFERENCES members(id)
+        FOREIGN KEY (borrowed_by) REFERENCES library_users(id)
 );
 
--- Members table (used only by the future JPA‑based auth; currently in‑memory)
-CREATE TABLE members (
-    id           INT AUTO_INCREMENT PRIMARY KEY,
-    name         VARCHAR(100) NOT NULL,
-    email        VARCHAR(150) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    role         ENUM('ADMIN','MEMBER') NOT NULL DEFAULT 'MEMBER'
+-- Library users (new registration system)
+CREATE TABLE IF NOT EXISTS library_users (
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    full_name   VARCHAR(100) NOT NULL,
+    email       VARCHAR(150) NOT NULL UNIQUE,
+    username    VARCHAR(50)  NOT NULL UNIQUE,
+    password    VARCHAR(255) NOT NULL,
+    role        VARCHAR(20)  NOT NULL DEFAULT 'USER',
+    created_at  TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
 );
 ```
-> **Note:** The current implementation stores users **in memory** (see `SecurityConfig`). When you’re ready to persist users, replace the `InMemoryUserDetailsManager` with a JPA‑based `UserDetailsService` that reads from the `members` table.
+
+> The older `members` table is still present (from earlier phases) but is **not used** by the current backend. All authentication now relies on `library_users`.
 
 ---
 
@@ -92,45 +96,42 @@ git clone https://github.com/Abhi2-12/LibraryManagement.git
 cd LibraryManagement
 git checkout phase-5-backend
 
-# 2️⃣ Configure the DB
-# Edit src/main/resources/application.yml
-#   spring.datasource.url=jdbc:mysql://localhost:3306/library_db
-#   spring.datasource.username=YOUR_USER
-#   spring.datasource.password=YOUR_PASS
-#   spring.jpa.hibernate.ddl-auto=update   # creates/updates tables automatically
+# 2️⃣ Configure the DB (edit src/main/resources/application.properties)
+#    spring.datasource.url=jdbc:mysql://localhost:3306/library_db
+#    spring.datasource.username=YOUR_USER
+#    spring.datasource.password=YOUR_PASSWORD
+#    spring.jpa.hibernate.ddl-auto=update   # let Hibernate create/alter tables automatically
 
 # 3️⃣ Build the project
-# Maven
+# Maven example
 mvn clean package   # produces target/library-management-*.jar
-# or Gradle (if wrapper exists)
+# or Gradle (if wrapper is present)
 ./gradlew bootJar
 
 # 4️⃣ Run the API
 java -jar target/*.jar   # defaults to http://localhost:8080
 ```
 
-The API will be reachable at `http://localhost:8080`. You can test it quickly with `curl` or Postman, e.g.:
-
-```bash
-curl -u libraryadmin:AdminPass123! http://localhost:8080/api/auth/me
-```
+The API will now expose:
+- **`POST /api/auth/register`** – create a new `LibraryUser` (JSON body with `fullName`, `email`, `username`, `password`).
+- **`GET /api/auth/me`** – return the logged‑in user's username and roles.
+- All book endpoints as described earlier.
 
 ---
 
-## 🧪 Testing the Endpoints
+## 🧪 Testing Endpoints
 
-| Method | URL | Required Role | Description |
+| Method | URL | Role required | Description |
 |--------|-----|---------------|-------------|
 | `GET` | `/api/books` | – (public) | List all books |
-| `GET` | `/api/books/{id}` | – (public) | Get single book |
+| `GET` | `/api/books/{id}` | – (public) | Get a single book |
 | `POST` | `/api/books` | **ADMIN** | Add a new book |
 | `PUT` | `/api/books/{id}` | **ADMIN** | Update a book |
 | `DELETE` | `/api/books/{id}` | **ADMIN** | Delete a book |
-| `POST` | `/api/books/{id}/borrow` | **USER / ADMIN** | Mark as borrowed |
-| `POST` | `/api/books/{id}/return` | **USER / ADMIN** | Mark as returned |
-| `GET` | `/api/auth/me` | any authenticated user | Return username + roles (used by the frontend) |
-
-All protected endpoints require the `Authorization: Basic <base64>` header (or the default login form).
+| `POST` | `/api/books/{id}/borrow` | **USER / ADMIN** | Borrow a book (sets `borrowed = true` and `borrowed_by` to the current user id) |
+| `POST` | `/api/books/{id}/return` | **USER / ADMIN** | Return a book |
+| `POST` | `/api/auth/register` | – (public) | Register a new user (stores in `library_users`) |
+| `GET` | `/api/auth/me` | any authenticated user | Get current user details |
 
 ---
 
@@ -140,7 +141,7 @@ All protected endpoints require the `Authorization: Basic <base64>` header (or t
 # Build stage
 FROM maven:3-eclipse-temurin-22-alpine AS builder
 WORKDIR /app
-COPY pom.xml .      # or build.gradle if you use Gradle
+COPY pom.xml .
 COPY src ./src
 RUN mvn -B package -DskipTests
 
@@ -166,8 +167,12 @@ docker run -d -p 8080:8080 \
 
 ## 🗺️ Roadmap (project‑wide)
 
-- **Phase 4** – Complete Spring Boot REST API (currently done).  
-- **Phase 5** – Backend (this branch): polish authentication, switch to persistent users, add JWT, write integration tests.  
+- **Phase 4** – Complete Spring Boot REST API (now done).  
+- **Phase 5** – Backend (this branch):
+  - Finish registration endpoint (`/api/auth/register`).
+  - Replace in‑memory users with `LibraryUser`‑based auth.
+  - Optionally switch to JWT tokens for stateless auth.
+  - Add integration tests.
 - **Phase 6** – Frontend (React + Vite) – already updated with its own README.
 
 ---
