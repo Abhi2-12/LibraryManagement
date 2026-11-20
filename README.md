@@ -1,4 +1,4 @@
-# React + Vite
+#  React + Vite
 # 🌐 Library Management – Phase 6 Frontend (React + Vite)
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 This is the **frontend** for the Library Management System, built with **React 19** and **Vite**. It consumes the REST API provided by the **Phase 5 backend** (Spring Boot) to enable user registration, login, and library‑book operations.
@@ -35,3 +35,70 @@ frontend/
 ├─ .oxlintrc.json            # linter configuration
 ├─ index.html                # HTML entry point
 ├─ package.json              # scripts & dependencies
+├─ package-lock.json         # lockfile
+├─ vite.config.js            # Vite configuration
+├─ README.md                 # (this file)
+├─ public/                   # static assets served as‑is
+│   ├─ favicon.svg
+│   └─ icons.svg
+└─ src/                      # application source
+    ├─ App.jsx               # root component
+    ├─ main.jsx              # ReactDOM render entry
+    ├─ App.css               # (currently empty)
+    ├─ index.css             # global styles
+    ├─ assets/               # images (hero.png, react.svg, vite.svg)
+    ├─ components/           # reusable UI pieces
+    │   └─ Login.jsx          # login & registration form
+    └─ pages/                # page‑level components
+        ├─ AdminDashboard.jsx # admin UI (book CRUD)
+        └─ UserDashboard.jsx  # member UI (browse/borrow)
+```
+---
+## ⚙️ Prerequisites
+- **Node.js** (v20 or later) with npm (or Yarn).
+- The **Phase 5 backend** must be running (default URL `http://localhost:8080`).
+- Git (for version control).
+---
+## ### Build for Production
+```bash
+npm run build   # bundles into `dist/`
+# To preview the production build locally:
+npm run preview
+```
+---
+## 🔧 Configuration
+The frontend expects the backend API at `http://localhost:8080`. If your backend runs on a different host/port, edit the **base URL** inside `src/components/Login.jsx` (or create a dedicated `config.js` module) to point to the correct address.
+---
+## 📦 Deployment (optional)
+You can serve the built `dist/` folder with any static‑file server (e.g., `serve`, `nginx`, or a Docker container).
+```bash
+# Example using the `serve` package
+npm install -g serve
+serve -s dist
+```
+Or a minimal Dockerfile:
+```dockerfile
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+---
+## 🧪 Testing
+No test suite is currently included, but you can add **Jest** and **React Testing Library** for component/unit tests. A basic script could be added to `package.json`:
+```json
+"scripts": {
+  "test": "jest"
+}
+```
+---
+## 👨‍💻 Author
+**Md. Anamul Hassan Abhi**
+- GitHub: [@Abhi2-12](https://github.com/Abhi2-12)
+- Project Repository: [LibraryManagement](https://github.com/Abhi2-12/LibraryManagement)
