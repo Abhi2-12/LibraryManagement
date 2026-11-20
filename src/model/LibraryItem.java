@@ -1,7 +1,10 @@
 package model;
 
-public abstract class LibraryItem {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+public abstract class LibraryItem {
+    private static final Logger logger = LoggerFactory.getLogger(LibraryItem.class);
     private int id;
     private String title;
     private int year;
@@ -9,13 +12,13 @@ public abstract class LibraryItem {
     public abstract void displayInfo();
 
     public int search(int id) {
-        System.out.println("id");
-        return id;
+        logger.debug("Searching by id: {}", id);
+        return this.id;
     }
 
     public String search(String title) {
-        System.out.println("tittle");
-        return title;
+        logger.debug("Searching by title: {}", title);
+        return this.title;
     }
 
     public LibraryItem(int id, String title, int year) {
